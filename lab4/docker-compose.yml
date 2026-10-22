@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lab4-postgres
+    environment:
+      POSTGRES_DB: retail
+      POSTGRES_USER: lab4
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-lab4}
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - ./01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro

@@ -1,0 +1,8 @@
+tests/test_app.py::test_health PASSED                                    [ 14%]
+tests/test_app.py::test_predict_valid PASSED                             [ 28%]
+tests/test_app.py::test_risky_customer_scores_higher_than_loyal PASSED   [ 42%]
+tests/test_app.py::test_missing_total_charges_is_allowed PASSED          [ 57%]
+tests/test_app.py::test_invalid_category_rejected PASSED                 [ 71%]
+tests/test_app.py::test_negative_and_missing_fields_rejected PASSED      [ 85%]
+tests/test_app.py::test_batch PASSED                                     [100%]
+========================= 7 passed, 1 warning in 1.99s =========================

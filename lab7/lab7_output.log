@@ -1,0 +1,121 @@
+:: loading settings :: url = jar:file:/C:/Users/ajsin/AppData/Local/Programs/Python/Python313/Lib/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+===== Шаг 2. Создание Delta-таблицы =====
+Spark 3.5.3
+root
+ |-- transaction_id: integer (nullable = true)
+ |-- sale_date: date (nullable = true)
+ |-- store_id: integer (nullable = true)
+ |-- product_id: integer (nullable = true)
+ |-- category: string (nullable = true)
+ |-- quantity: integer (nullable = true)
+ |-- sales_amount: double (nullable = true)
+
+Строк в CSV: 2000000
+Запись Delta: 4.3 с
+Файлов данных (parquet): 12, например: part-00000-6df406fa-699a-4bb0-b54c-370ad...
+Журнал _delta_log: ['00000000000000000000.json']
++-----------+------+---------------+
+|   category|   cnt|        revenue|
++-----------+------+---------------+
+|  Дом и сад|299979|3.78369198701E9|
+|     Одежда|400177|5.04818761168E9|
+|   Продукты|599740| 7.5868696388E9|
+|      Спорт|199978| 2.5195379516E9|
+|Электроника|500126|6.31134424648E9|
++-----------+------+---------------+
+
+
+===== Шаг 3.1. UPSERT (MERGE) =====
+До MERGE (id 1,2,3 и будущие новые 2000001..2000003):
++--------------+---------+--------+------------+
+|transaction_id| category|quantity|sales_amount|
++--------------+---------+--------+------------+
+|             1|Дом и сад|       3|     6067.92|
+|             2|   Одежда|       8|     3756.88|
+|             3|Дом и сад|       5|     6469.75|
++--------------+---------+--------+------------+
+
+Источник MERGE: 3 изменённые записи + 3 новые
+MERGE выполнен за 2.1 с
+После MERGE:
++--------------+-----------+--------+------------+
+|transaction_id|   category|quantity|sales_amount|
++--------------+-----------+--------+------------+
+|             1|  Дом и сад|      10|     99999.0|
+|             2|     Одежда|      20|     88888.0|
+|             3|  Дом и сад|      30|     77777.0|
+|       2000001|      Спорт|       2|      1500.0|
+|       2000002|   Продукты|       4|       800.0|
+|       2000003|Электроника|       1|     25000.0|
++--------------+-----------+--------+------------+
+
+Всего строк: 2000003
+
+===== Доп. операция: DELETE =====
+Удалена запись 2000003. Строк: 2000002
+
+===== Шаг 3.3. Эволюция схемы (mergeSchema) =====
+root
+ |-- transaction_id: integer (nullable = true)
+ |-- sale_date: date (nullable = true)
+ |-- store_id: integer (nullable = true)
+ |-- product_id: integer (nullable = true)
+ |-- category: string (nullable = true)
+ |-- quantity: integer (nullable = true)
+ |-- sales_amount: double (nullable = true)
+ |-- discount: double (nullable = true)
+
++--------------+----------+--------+----------+-----------+--------+------------+--------+
+|transaction_id| sale_date|store_id|product_id|   category|quantity|sales_amount|discount|
++--------------+----------+--------+----------+-----------+--------+------------+--------+
+|             1|2026-01-25|      35|       758|  Дом и сад|      10|     99999.0|    NULL|
+|       2000011|2026-04-01|       5|        10|      Спорт|       2|      1500.0|    0.15|
+|       2000012|2026-04-01|       6|        11|   Продукты|       4|       800.0|    0.15|
+|       2000013|2026-04-02|       7|        12|Электроника|       1|     25000.0|    0.15|
++--------------+----------+--------+----------+-----------+--------+------------+--------+
+
+Строк с discount IS NULL (старые записи): 2000002
+
+===== История транзакций таблицы (DESCRIBE HISTORY) =====
++-------+---------+------------------------------------------------------------+
+|version|operation|                                                      params|
++-------+---------+------------------------------------------------------------+
+|      0|    WRITE|                  {mode -> ErrorIfExists, partitionBy -> []}|
+|      1|    MERGE|{predicate -> ["(transaction_id#1400 = transaction_id#162...|
+|      2|   DELETE|          {predicate -> ["(transaction_id#1400 = 2000003)"]}|
+|      3|    WRITE|                         {mode -> Append, partitionBy -> []}|
++-------+---------+------------------------------------------------------------+
+
+
+===== Шаг 3.2. Time Travel =====
+versionAsOf=0: строк=2000000, sales_amount(id=1)=6067.92, столбцов=7
+versionAsOf=1: строк=2000003, sales_amount(id=1)=99999.0, столбцов=7
+versionAsOf=2: строк=2000002, sales_amount(id=1)=99999.0, столбцов=7
+versionAsOf=3: строк=2000005, sales_amount(id=1)=99999.0, столбцов=8
+
+timestampAsOf = 2026-10-15 08:23:13.577000
+timestampAsOf: строк = 2000003 , sales_amount(id=1) = 99999.0
+
+Откат (RESTORE) к версии 0:
+Строк после RESTORE: 2000000 | столбцов: 7
+
+===== Шаг 5. Delta Lake vs Parquet =====
+Q1: count(*)                                            parquet=  0.08 с   delta=  0.21 с
+Q2: SUM по категориям                                   parquet=  0.13 с   delta=  0.26 с
+Q3: фильтр store_id=7 AND дата>=2026-03-01              parquet=  0.11 с   delta=  0.21 с
+Q4: топ-10 товаров по выручке                           parquet=  0.13 с   delta=  0.24 с
+Q5: точечный поиск transaction_id=1500000               parquet=  0.04 с   delta=  0.15 с
++----------------------------------------+----------------------------------------+
+|                                    path|                                 metrics|
++----------------------------------------+----------------------------------------+
+|file:/C:/Users/ajsin/Desktop/ВУЗ/4 ку...|{1, 12, {27160569, 27160569, 2.716056...|
++----------------------------------------+----------------------------------------+
+
+Q3: фильтр store_id=7 AND дата>=2026-03-01              delta после OPTIMIZE ZORDER=  0.24 с
+Q5: точечный поиск transaction_id=1500000               delta после OPTIMIZE ZORDER=  0.14 с
+
+Размер данных (активные .parquet, до OPTIMIZE): parquet=27.3 МБ, delta=27.3 МБ
+SUCCESS: The process with PID 7928 (child process of PID 9684) has been terminated.
+SUCCESS: The process with PID 9684 (child process of PID 22412) has been terminated.
+SUCCESS: The process with PID 22412 (child process of PID 5704) has been terminated.

@@ -1,0 +1,6 @@
+data/
+screenshots/
+tests/
+__pycache__/
+*.ipynb
+*.log

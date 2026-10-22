@@ -1,0 +1,11 @@
+# обучение, тесты, отчёт
+-r requirements.txt
+matplotlib
+jupyter
+nbconvert
+pytest
+httpx
+python-docx
+pillow
+playwright
+requests

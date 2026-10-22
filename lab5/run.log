@@ -1,0 +1,10 @@
+$ docker run -d --name ml-service -p 5000:5000 ml-service
+$ docker ps --filter name=ml-service
+NAMES        IMAGE        STATUS                            PORTS
+ml-service   ml-service   Up 2 seconds (health: starting)   127.0.0.1:5000->5000/tcp
+
+$ curl http://localhost:5000/health
+{"status":"ok","model_loaded":true}
+
+$ curl http://localhost:5000/model
+{"model":"GradientBoosting","version":"202610220715","trained_at":"2026-10-22T07:15:37+00:00","sklearn":"1.9.1","threshold":0.5,"test":{"roc_auc":0.8432,"f1":0.5826,"accuracy":0.8027}}

@@ -1,0 +1,8 @@
+# зависимости сервиса (версия scikit-learn должна совпадать с версией при обучении — см. model_meta.json)
+fastapi==0.159.1
+uvicorn==0.54.0
+pydantic==2.14.1
+scikit-learn==1.9.1
+pandas==3.0.6
+numpy==2.5.4
+joblib==1.6.0
