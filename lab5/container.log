@@ -1,0 +1,8 @@
+INFO:     172.17.0.1:55024 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.17.0.1:55040 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.17.0.1:55042 - "GET /model HTTP/1.1" 200 OK
+2026-10-22 07:22:16,504 INFO churn_api predict: churn=1 p=0.6436
+INFO:     172.17.0.1:55054 - "POST /predict HTTP/1.1" 200 OK
+2026-10-22 07:22:16,559 INFO churn_api predict: churn=0 p=0.0208
+INFO:     172.17.0.1:55060 - "POST /predict HTTP/1.1" 200 OK
+INFO:     172.17.0.1:55068 - "POST /predict HTTP/1.1" 422 Unprocessable Entity

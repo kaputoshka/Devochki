@@ -1,0 +1,7 @@
+numpy
+pandas
+psycopg[binary]
+matplotlib
+playwright      # после установки: python -m playwright install chromium
+python-docx
+pillow

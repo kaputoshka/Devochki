@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1080" viewBox="0 0 1560 1080" role="img" aria-labelledby="chart-title" font-family="Arial, Helvetica, sans-serif">
+<title id="chart-title">Ящики с усами для переменных California Housing</title>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="780.0" y="28" text-anchor="middle" font-size="21" font-weight="bold" fill="#1f2937">Рисунок 2. Ящики с усами: распределения и выбросы</text>
+<text x="275.0" y="70" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">Longitude</text>
+<line x1="70.0" y1="195" x2="495.0" y2="195" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="70.0" y1="173" x2="70.0" y2="217" stroke="#1f2937"/>
+<line x1="495.0" y1="173" x2="495.0" y2="217" stroke="#1f2937"/>
+<rect x="177.9" y="161" width="160.4" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="318.1" y1="161" x2="318.1" y2="229" stroke="#c2410c" stroke-width="2"/>
+<text x="318.1" y="150" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="70" y="259" text-anchor="start" font-size="9" fill="#6b7280">min -124.35</text>
+<text x="495" y="259" text-anchor="end" font-size="9" fill="#6b7280">max -114.31</text>
+<text x="275.0" y="305" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 0</text>
+<text x="275.0" y="328" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="785.0" y="70" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">Latitude</text>
+<line x1="580.0" y1="195" x2="1005.0" y2="195" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="580.0" y1="173" x2="580.0" y2="217" stroke="#1f2937"/>
+<line x1="1005.0" y1="173" x2="1005.0" y2="217" stroke="#1f2937"/>
+<rect x="642.8" y="161" width="170.7" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="657.7" y1="161" x2="657.7" y2="229" stroke="#c2410c" stroke-width="2"/>
+<text x="657.7" y="150" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="580" y="259" text-anchor="start" font-size="9" fill="#6b7280">min 32.54</text>
+<text x="1005" y="259" text-anchor="end" font-size="9" fill="#6b7280">max 41.95</text>
+<text x="785.0" y="305" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 0</text>
+<text x="785.0" y="328" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="1295.0" y="70" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">HouseAge</text>
+<line x1="1090.0" y1="195" x2="1515.0" y2="195" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="1090.0" y1="173" x2="1090.0" y2="217" stroke="#1f2937"/>
+<line x1="1515.0" y1="173" x2="1515.0" y2="217" stroke="#1f2937"/>
+<rect x="1231.7" y="161" width="158.3" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="1323.3" y1="161" x2="1323.3" y2="229" stroke="#c2410c" stroke-width="2"/>
+<text x="1323.3" y="150" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="1090" y="259" text-anchor="start" font-size="9" fill="#6b7280">min 1.00</text>
+<text x="1515" y="259" text-anchor="end" font-size="9" fill="#6b7280">max 52.00</text>
+<text x="1295.0" y="305" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 0</text>
+<text x="1295.0" y="328" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="275.0" y="410" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">AveRooms</text>
+<line x1="73.6" y1="535" x2="93.0" y2="535" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="73.6" y1="513" x2="73.6" y2="557" stroke="#1f2937"/>
+<line x1="93.0" y1="513" x2="93.0" y2="557" stroke="#1f2937"/>
+<rect x="80.8" y="501" width="4.9" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="83.2" y1="501" x2="83.2" y2="569" stroke="#c2410c" stroke-width="2"/>
+<text x="83.2" y="490" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="70" y="599" text-anchor="start" font-size="9" fill="#6b7280">min 0.85</text>
+<text x="495" y="599" text-anchor="end" font-size="9" fill="#6b7280">max 141.91</text>
+<text x="275.0" y="645" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 511</text>
+<text x="275.0" y="668" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="785.0" y="410" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">AveBedrms</text>
+<line x1="586.7" y1="535" x2="591.4" y2="535" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="586.7" y1="513" x2="586.7" y2="557" stroke="#1f2937"/>
+<line x1="591.4" y1="513" x2="591.4" y2="557" stroke="#1f2937"/>
+<rect x="588.5" y="501" width="1.2" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="589.0" y1="501" x2="589.0" y2="569" stroke="#c2410c" stroke-width="2"/>
+<text x="589.0" y="490" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="580" y="599" text-anchor="start" font-size="9" fill="#6b7280">min 0.33</text>
+<text x="1005" y="599" text-anchor="end" font-size="9" fill="#6b7280">max 34.07</text>
+<text x="785.0" y="645" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 1424</text>
+<text x="785.0" y="668" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="1295.0" y="410" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">Population</text>
+<line x1="1090.0" y1="535" x2="1127.3" y2="535" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="1090.0" y1="513" x2="1090.0" y2="557" stroke="#1f2937"/>
+<line x1="1127.3" y1="513" x2="1127.3" y2="557" stroke="#1f2937"/>
+<rect x="1099.3" y="501" width="11.2" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="1103.9" y1="501" x2="1103.9" y2="569" stroke="#c2410c" stroke-width="2"/>
+<text x="1103.9" y="490" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="1090" y="599" text-anchor="start" font-size="9" fill="#6b7280">min 3.00</text>
+<text x="1515" y="599" text-anchor="end" font-size="9" fill="#6b7280">max 35682.00</text>
+<text x="1295.0" y="645" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 1196</text>
+<text x="1295.0" y="668" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="275.0" y="750" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">AveOccup</text>
+<line x1="70.2" y1="875" x2="71.3" y2="875" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="70.2" y1="853" x2="70.2" y2="897" stroke="#1f2937"/>
+<line x1="71.3" y1="853" x2="71.3" y2="897" stroke="#1f2937"/>
+<rect x="70.6" y="841" width="0.3" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="70.7" y1="841" x2="70.7" y2="909" stroke="#c2410c" stroke-width="2"/>
+<text x="70.7" y="830" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="70" y="939" text-anchor="start" font-size="9" fill="#6b7280">min 0.69</text>
+<text x="495" y="939" text-anchor="end" font-size="9" fill="#6b7280">max 1243.33</text>
+<text x="275.0" y="985" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 711</text>
+<text x="275.0" y="1008" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="785.0" y="750" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">MedInc</text>
+<line x1="580.0" y1="875" x2="800.2" y2="875" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="580.0" y1="853" x2="580.0" y2="897" stroke="#1f2937"/>
+<line x1="800.2" y1="853" x2="800.2" y2="897" stroke="#1f2937"/>
+<rect x="640.5" y="841" width="63.9" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="669.0" y1="841" x2="669.0" y2="909" stroke="#c2410c" stroke-width="2"/>
+<text x="669.0" y="830" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="580" y="939" text-anchor="start" font-size="9" fill="#6b7280">min 0.50</text>
+<text x="1005" y="939" text-anchor="end" font-size="9" fill="#6b7280">max 15.00</text>
+<text x="785.0" y="985" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 681</text>
+<text x="785.0" y="1008" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+<text x="1295.0" y="750" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">MedHouseVal</text>
+<line x1="1090.0" y1="875" x2="1499.4" y2="875" stroke="#1f2937" stroke-width="1.3"/>
+<line x1="1090.0" y1="853" x2="1090.0" y2="897" stroke="#1f2937"/>
+<line x1="1499.4" y1="853" x2="1499.4" y2="897" stroke="#1f2937"/>
+<rect x="1181.7" y="841" width="127.2" height="68" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.2"/>
+<line x1="1234.3" y1="841" x2="1234.3" y2="909" stroke="#c2410c" stroke-width="2"/>
+<text x="1234.3" y="830" text-anchor="middle" font-size="9" fill="#c2410c">медиана</text>
+<text x="1090" y="939" text-anchor="start" font-size="9" fill="#6b7280">min 0.15</text>
+<text x="1515" y="939" text-anchor="end" font-size="9" fill="#6b7280">max 5.00</text>
+<text x="1295.0" y="985" text-anchor="middle" font-size="11" fill="#1f2937">Выбросов по IQR: 1071</text>
+<text x="1295.0" y="1008" text-anchor="middle" font-size="9" fill="#6b7280">Точки-выбросы не отображены, чтобы сохранить читаемость масштаба.</text>
+</svg>

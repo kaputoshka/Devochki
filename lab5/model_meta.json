@@ -1,0 +1,67 @@
+{
+ "model": "GradientBoosting",
+ "version": "202610220715",
+ "trained_at": "2026-10-22T07:15:37+00:00",
+ "sklearn": "1.9.1",
+ "features": [
+  "tenure",
+  "MonthlyCharges",
+  "TotalCharges",
+  "gender",
+  "SeniorCitizen",
+  "Partner",
+  "Dependents",
+  "PhoneService",
+  "MultipleLines",
+  "InternetService",
+  "OnlineSecurity",
+  "OnlineBackup",
+  "DeviceProtection",
+  "TechSupport",
+  "StreamingTV",
+  "StreamingMovies",
+  "Contract",
+  "PaperlessBilling",
+  "PaymentMethod"
+ ],
+ "threshold": 0.5,
+ "cv": [
+  {
+   "model": "GradientBoosting",
+   "roc_auc_mean": 0.8486,
+   "f1_mean": 0.5895,
+   "accuracy_mean": 0.8035,
+   "roc_auc_std": 0.0118,
+   "f1_std": 0.025,
+   "accuracy_std": 0.0119,
+   "fit_time_s": 1.6285
+  },
+  {
+   "model": "LogisticRegression",
+   "roc_auc_mean": 0.8461,
+   "f1_mean": 0.593,
+   "accuracy_mean": 0.8026,
+   "roc_auc_std": 0.0125,
+   "f1_std": 0.0298,
+   "accuracy_std": 0.012,
+   "fit_time_s": 0.1316
+  },
+  {
+   "model": "RandomForest",
+   "roc_auc_mean": 0.8449,
+   "f1_mean": 0.5745,
+   "accuracy_mean": 0.8039,
+   "roc_auc_std": 0.0099,
+   "f1_std": 0.0171,
+   "accuracy_std": 0.0086,
+   "fit_time_s": 1.0644
+  }
+ ],
+ "test": {
+  "roc_auc": 0.8432,
+  "f1": 0.5826,
+  "accuracy": 0.8027
+ },
+ "n_train": 5634,
+ "n_test": 1409
+}

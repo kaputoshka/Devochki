@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Продажи розничной сети</title>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<style>
+  :root { --bg:#f4f6f9; --card:#fff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+          --main:#2563eb; --pale:#cbd5e1; --accent:#f59e0b; --up:#16a34a; --down:#dc2626; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  .wrap { max-width:1400px; margin:0 auto; padding:16px 20px 32px; }
+  h1 { font-size:22px; margin:0 0 2px; }
+  .sub { color:var(--muted); margin-bottom:12px; }
+  .filters { display:flex; flex-wrap:wrap; gap:12px; align-items:end; background:var(--card); border:1px solid var(--line);
+             border-radius:10px; padding:10px 14px; margin-bottom:14px; }
+  .filters label { display:flex; flex-direction:column; font-size:12px; color:var(--muted); gap:3px; }
+  select, button { font:inherit; padding:5px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  button { cursor:pointer; } button:hover { border-color:var(--main); }
+  .chips { margin-left:auto; display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { background:#eef2ff; color:var(--main); border-radius:12px; padding:3px 10px; font-size:12px; }
+  .grid { display:grid; grid-template-columns:repeat(12, 1fr); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; min-width:0; }
+  .card h2 { font-size:15px; margin:0 0 2px; } .card .hint { font-size:12px; color:var(--muted); margin-bottom:4px; }
+  .kpi { grid-column:span 3; } .kpi .v { font-size:28px; font-weight:700; margin:4px 0 2px; }
+  .kpi .d { font-size:13px; } .up { color:var(--up); } .down { color:var(--down); }
+  .story { grid-column:span 12; border-left:4px solid var(--accent); }
+  .story ul { margin:6px 0 0; padding-left:18px; } .story li { margin:2px 0; }
+  .s8 { grid-column:span 8; } .s4 { grid-column:span 4; } .s6 { grid-column:span 6; } .s12 { grid-column:span 12; }
+  .step { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); grid-column:span 12; margin-top:6px; }
+  .crumbs { font-size:13px; margin-bottom:2px; } .crumbs a { color:var(--main); cursor:pointer; text-decoration:underline; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { padding:5px 8px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+  th:nth-child(-n+2), td:nth-child(-n+2) { text-align:left; } th { color:var(--muted); font-weight:600; position:sticky; top:0; background:#fff; }
+  .tbl { max-height:360px; overflow:auto; }
+  .bar { display:inline-block; height:8px; background:var(--main); border-radius:4px; vertical-align:middle; margin-right:6px; opacity:.6; }
+  .note { font-size:12px; color:var(--muted); margin-top:10px; }
+  @media (max-width: 900px) { .kpi { grid-column:span 6; } .s8, .s4, .s6 { grid-column:span 12; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title">Продажи сети</h1>
+  <div class="sub">Дашборд директора по продажам · источник: PostgreSQL, витрина v_sales · <span id="period-sub"></span></div>
+
+  <div class="filters">
+    <label>Период с <select id="f-from"></select></label>
+    <label>по <select id="f-to"></select></label>
+    <label>Регион <select id="f-region"></select></label>
+    <label>Категория <select id="f-cat"></select></label>
+    <button id="reset">Сбросить фильтры</button>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="grid">
+    <div class="step">1 · Обзор: как идут дела?</div>
+    <div class="card kpi"><div class="hint">Выручка</div><div class="v" id="k-rev"></div><div class="d" id="d-rev"></div></div>
+    <div class="card kpi"><div class="hint">Заказы</div><div class="v" id="k-ord"></div><div class="d" id="d-ord"></div></div>
+    <div class="card kpi"><div class="hint">Средний чек</div><div class="v" id="k-avg"></div><div class="d" id="d-avg"></div></div>
+    <div class="card kpi"><div class="hint">Продано, шт.</div><div class="v" id="k-units"></div><div class="d" id="d-units"></div></div>
+    <div class="card story"><h2>Главное</h2><ul id="insights"></ul></div>
+
+    <div class="step">2 · Тренд: когда продаём?</div>
+    <div class="card s8"><h2 id="t-trend">Динамика выручки по месяцам</h2>
+      <div class="hint">Сравнение с прошлым годом; оранжевым выделены рекорд и месяц с максимальным ростом</div><div id="c-trend" style="height:320px"></div></div>
+    <div class="card s4"><h2>Детализация: год → квартал → месяц</h2>
+      <div class="crumbs" id="crumbs"></div><div class="hint">Клик по столбцу — уровень ниже</div><div id="c-drill" style="height:290px"></div></div>
+
+    <div class="step">3 · Детали: что и где продаём?</div>
+    <div class="card s4"><h2 id="t-cat">Выручка по категориям</h2><div class="hint">Клик по категории фильтрует весь дашборд</div><div id="c-cat" style="height:300px"></div></div>
+    <div class="card s4"><h2 id="t-reg">Изменение выручки по регионам, г/г</h2><div class="hint">Красный — падение; клик по региону фильтрует дашборд</div><div id="c-reg" style="height:300px"></div></div>
+    <div class="card s4"><h2>Продажи по дням недели</h2><div class="hint">Доля выручки; оранжевый — пиковый день</div><div id="c-dow" style="height:300px"></div></div>
+    <div class="card s6"><h2>Карта продаж по магазинам</h2><div class="hint">Размер — выручка, цвет — изменение г/г; клик фильтрует по региону</div><div id="c-map" style="height:360px"></div></div>
+    <div class="card s6"><h2>Детализация по товарам</h2><div class="hint">Отсортировано по выручке</div><div class="tbl"><table id="tbl"></table></div></div>
+
+    <div class="step">4 · Выводы: что делать?</div>
+    <div class="card s12 story"><h2>Выводы и рекомендации</h2><ul id="conclusions"></ul>
+      <div class="note">* Изменение г/г считается по месяцам выбранного периода, для которых есть тот же месяц прошлого года.</div></div>
+  </div>
+</div>
+
+<script>
+/*__DATA__*/
+const MON = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"];
+const DOWN = ["пн","вт","ср","чт","пт","сб","вс"];
+const C = { main:"#2563eb", pale:"#cbd5e1", accent:"#f59e0b", up:"#16a34a", down:"#dc2626", prev:"#94a3b8" };
+const CFG = { displayModeBar:false, responsive:true };
+const BASE = { margin:{l:50,r:10,t:10,b:36}, separators:", ", font:{family:"-apple-system, Segoe UI, Roboto, Arial", size:12},
+               paper_bgcolor:"#fff", plot_bgcolor:"#fff", hoverlabel:{bgcolor:"#fff"} };
+
+const store = Object.fromEntries(DATA.stores.map(s => [s[0], {city:s[1], region:s[2], lat:s[3], lon:s[4]}]));
+const prod = Object.fromEntries(DATA.products.map(p => [p[0], {name:p[1], cat:DATA.categories[p[2]]}]));
+const regions = [...new Set(DATA.stores.map(s => s[2]))];
+const N = DATA.months.length;
+const monLabel = i => { const [y, m] = DATA.months[i].split("-"); return `${MON[+m - 1]} ${y}`; };
+const S = { from:0, to:N - 1, region:null, cat:null, year:null, q:null };
+
+const money = v => v >= 1e9 ? (v/1e9).toFixed(2).replace(".", ",") + " млрд ₽" : v >= 1e6 ? (v/1e6).toFixed(1).replace(".", ",") + " млн ₽"
+                 : Math.round(v).toLocaleString("ru-RU") + " ₽";
+const num = v => Math.round(v).toLocaleString("ru-RU");
+const pct = v => v === null ? "н/д" : (v > 0 ? "+" : "") + v.toFixed(1).replace(".", ",") + "%";
+const yoy = (cur, prev) => prev > 0 ? (cur / prev - 1) * 100 : null;
+const delta = (cur, prev) => { const d = yoy(cur, prev); return d === null ? '<span style="color:#6b7280">нет данных за прошлый год</span>'
+  : `<span class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "▲" : "▼"} ${pct(d)}</span> <span style="color:#6b7280">г/г*</span>`; };
+
+// отбор строк куба; skip позволяет не применять фильтр к визуализации, которая сама его задаёт (cross-filtering)
+function ok(mi, sid, cat, skip = {}) {
+  return (skip.region || !S.region || store[sid].region === S.region) && (skip.cat || !S.cat || cat === S.cat);
+}
+const inRange = mi => mi >= S.from && mi <= S.to;
+const comparable = mi => inRange(mi) && mi >= 12;   // месяц, у которого есть тот же месяц прошлого года
+
+// агрегирует куб: key(row) → {rev, ord, units, cur, prev} (cur/prev — для расчёта г/г)
+function agg(rows, key, skip = {}, catOf = r => prod[r[2]].cat) {
+  const out = {};
+  for (const r of rows) {
+    const [mi, sid] = r;
+    if (!ok(mi, sid, catOf(r), skip)) continue;
+    const k = key(r); const o = out[k] ??= {rev:0, ord:0, units:0, cur:0, prev:0, curOrd:0, prevOrd:0, curUnits:0, prevUnits:0};
+    if (inRange(mi)) { o.rev += r[3]; o.units += r[4]; o.ord += r[5]; }
+    if (comparable(mi)) { o.cur += r[3]; o.curOrd += r[5]; o.curUnits += r[4]; }
+    if (comparable(mi + 12)) { o.prev += r[3]; o.prevOrd += r[5]; o.prevUnits += r[4]; }
+  }
+  return out;
+}
+
+// помесячная выручка и заказы без фильтра периода (нужны для сравнения с прошлым годом)
+function monthTotals() {
+  const out = {};
+  for (const r of DATA.cube) {
+    if (!ok(r[0], r[1], prod[r[2]].cat)) continue;
+    const o = out[r[0]] ??= {rev:0, ord:0}; o.rev += r[3]; o.ord += r[5];
+  }
+  return out;
+}
+
+function periodText() { return S.from === 0 && S.to === N - 1 ? "весь период" : `${monLabel(S.from)} — ${monLabel(S.to)}`; }
+
+function render() {
+  const cube = DATA.cube;
+  // динамический заголовок
+  const parts = [S.region ?? "все регионы", S.cat ?? "все категории", periodText()];
+  document.getElementById("title").textContent = "Продажи сети: " + parts.join(" · ");
+  document.getElementById("period-sub").textContent = `данные: ${monLabel(0)} — ${monLabel(N - 1)}`;
+  document.getElementById("chips").innerHTML = [S.region && "Регион: " + S.region, S.cat && "Категория: " + S.cat]
+    .filter(Boolean).map(t => `<span class="chip">${t}</span>`).join("");
+
+  // KPI
+  const t = agg(cube, () => "all")["all"] ?? {rev:0, ord:0, units:0, cur:0, prev:0, curOrd:0, prevOrd:0, curUnits:0, prevUnits:0};
+  document.getElementById("k-rev").textContent = money(t.rev);
+  document.getElementById("k-ord").textContent = num(t.ord);
+  document.getElementById("k-avg").textContent = money(t.ord ? t.rev / t.ord : 0);
+  document.getElementById("k-units").textContent = num(t.units);
+  document.getElementById("d-rev").innerHTML = delta(t.cur, t.prev);
+  document.getElementById("d-ord").innerHTML = delta(t.curOrd, t.prevOrd);
+  document.getElementById("d-avg").innerHTML = delta(t.curOrd ? t.cur / t.curOrd : 0, t.prevOrd ? t.prev / t.prevOrd : 0);
+  document.getElementById("d-units").innerHTML = delta(t.curUnits, t.prevUnits);
+
+  const byMonth = agg(cube, r => r[0]);
+  const byCat = agg(cube, r => prod[r[2]].cat, {cat:true});
+  const byReg = agg(cube, r => store[r[1]].region, {region:true});
+  const byStore = agg(cube, r => r[1]);
+  const byProd = agg(cube, r => r[2]);
+  const byDow = agg(DATA.dow, r => r[6], {}, r => DATA.categories[r[2]]);
+
+  const full = monthTotals();
+  drawTrend(full);
+  drawDrill();
+  drawCat(byCat);
+  drawReg(byReg);
+  drawDow(byDow);
+  drawMap(byStore);
+  drawTable(byProd, t.rev);
+  drawStory(t, full, byCat, byReg, byDow);
+}
+
+function drawTrend(byMonth) {
+  const years = [...new Set(DATA.months.map(m => m.slice(0, 4)))];
+  // месяцы периода и те же месяцы прошлого года (линия сравнения)
+  const sel = Object.keys(byMonth).map(Number).filter(inRange);
+  const months = [...new Set([...sel.map(i => i - 12).filter(i => byMonth[i]), ...sel])].sort((a, b) => a - b);
+  const traces = years.map((y, yi) => {
+    const idx = months.filter(i => DATA.months[i].startsWith(y));
+    return { x: idx.map(i => MON[+DATA.months[i].slice(5) - 1]), y: idx.map(i => byMonth[i].rev), name: y, type:"scatter", mode:"lines+markers",
+      line:{color: yi === years.length - 1 ? C.main : C.prev, width: yi === years.length - 1 ? 3 : 2, dash: yi === years.length - 1 ? "solid" : "dot"},
+      customdata: idx.map(i => [byMonth[i].ord, byMonth[i].rev / byMonth[i].ord, monLabel(i), yoy(byMonth[i].rev, byMonth[i - 12]?.rev ?? 0)]),
+      hovertemplate: "<b>%{customdata[2]}</b><br>Выручка: %{y:,.0f} ₽<br>Заказов: %{customdata[0]:,}<br>Средний чек: %{customdata[1]:,.0f} ₽<extra></extra>" };
+  });
+  const ann = [], marks = [];
+  if (sel.length) {
+    const rec = sel.reduce((a, b) => byMonth[b].rev > byMonth[a].rev ? b : a);
+    ann.push({ x: MON[+DATA.months[rec].slice(5) - 1], y: byMonth[rec].rev, text: `Рекорд: ${monLabel(rec)}<br>${money(byMonth[rec].rev)}`,
+               showarrow:true, arrowcolor:C.accent, ax:-60, ay:-30, font:{color:"#92400e"}, bgcolor:"#fffbeb" });
+    marks.push(rec);
+    const cmp = sel.filter(i => i >= 12 && byMonth[i - 12]?.rev > 0);
+    if (cmp.length) {
+      const g = cmp.reduce((a, b) => yoy(byMonth[b].rev, byMonth[b - 12].rev) > yoy(byMonth[a].rev, byMonth[a - 12].rev) ? b : a);
+      if (g !== rec) {
+        ann.push({ x: MON[+DATA.months[g].slice(5) - 1], y: byMonth[g].rev, text: `Макс. рост г/г: ${monLabel(g)} ${pct(yoy(byMonth[g].rev, byMonth[g - 12].rev))}`,
+                   showarrow:true, arrowcolor:C.accent, ax:-110, ay:25, font:{color:"#92400e"}, bgcolor:"#fffbeb" });
+        marks.push(g);
+      }
+    }
+  }
+  traces.push({ x: marks.map(i => MON[+DATA.months[i].slice(5) - 1]), y: marks.map(i => byMonth[i].rev), type:"scatter", mode:"markers",
+                marker:{color:C.accent, size:14, line:{color:"#fff", width:2}}, hoverinfo:"skip", showlegend:false });
+  Plotly.react("c-trend", traces, { ...BASE, annotations: ann, legend:{orientation:"h", x:0, y:1.12},
+    xaxis:{categoryorder:"array", categoryarray:MON}, yaxis:{tickformat:"~s", ticksuffix:" ₽", gridcolor:"#f1f5f9"} }, CFG);
+}
+
+function drawDrill() {
+  // уровень детализации: годы → кварталы выбранного года → месяцы выбранного квартала
+  const level = S.year === null ? "year" : S.q === null ? "quarter" : "month";
+  const keyOf = mi => { const [y, m] = DATA.months[mi].split("-").map(Number); const q = Math.ceil(m / 3);
+    if (level === "year") return String(y);
+    if (+S.year !== y) return null;
+    if (level === "quarter") return "Q" + q;
+    return q === S.q ? MON[m - 1] : null; };
+  const g = {};
+  for (const r of DATA.cube) {
+    if (!inRange(r[0]) || !ok(r[0], r[1], prod[r[2]].cat)) continue;
+    const k = keyOf(r[0]); if (k === null) continue;
+    const o = g[k] ??= {rev:0, ord:0}; o.rev += r[3]; o.ord += r[5];
+  }
+  const ks = Object.keys(g); const vals = ks.map(k => g[k].rev); const mx = Math.max(...vals);
+  Plotly.react("c-drill", [{ x: ks, y: vals, type:"bar", marker:{color: vals.map(v => v === mx ? C.accent : C.main)},
+    text: vals.map(money), textposition:"outside", cliponaxis:false,
+    customdata: ks.map(k => [g[k].ord, g[k].rev / g[k].ord]),
+    hovertemplate:"<b>%{x}</b><br>Выручка: %{y:,.0f} ₽<br>Заказов: %{customdata[0]:,}<br>Средний чек: %{customdata[1]:,.0f} ₽<extra></extra>" }],
+    { ...BASE, margin:{l:50, r:10, t:24, b:30}, xaxis:{type:"category"}, yaxis:{tickformat:"~s", gridcolor:"#f1f5f9", rangemode:"tozero"} }, CFG);
+  const cr = [`<a data-l="0">Все годы</a>`];
+  if (S.year !== null) cr.push(S.q === null ? `<b>${S.year}</b>` : `<a data-l="1">${S.year}</a>`);
+  if (S.q !== null) cr.push(`<b>Q${S.q}</b>`);
+  if (S.year === null) cr[0] = "<b>Все годы</b>";
+  document.getElementById("crumbs").innerHTML = cr.join(" › ");
+}
+
+function barColors(keys, sel, base) { return keys.map(k => sel === null ? base : k === sel ? C.main : C.pale); }
+
+function drawCat(byCat) {
+  const ks = Object.keys(byCat).sort((a, b) => byCat[a].rev - byCat[b].rev);
+  const total = ks.reduce((s, k) => s + byCat[k].rev, 0);
+  document.getElementById("t-cat").textContent = "Выручка по категориям" + (S.region ? " · " + S.region : "");
+  Plotly.react("c-cat", [{ y: ks, x: ks.map(k => byCat[k].rev), type:"bar", orientation:"h",
+    marker:{color: barColors(ks, S.cat, C.main)}, text: ks.map(k => money(byCat[k].rev)), textposition:"auto",
+    customdata: ks.map(k => [100 * byCat[k].rev / total, yoy(byCat[k].cur, byCat[k].prev) ?? 0, byCat[k].ord]),
+    hovertemplate:"<b>%{y}</b><br>Выручка: %{x:,.0f} ₽<br>Доля: %{customdata[0]:.1f}%<br>Изменение г/г: %{customdata[1]:+.1f}%<br>Заказов: %{customdata[2]:,}<extra></extra>" }],
+    { ...BASE, margin:{l:120, r:10, t:6, b:30}, xaxis:{tickformat:"~s", gridcolor:"#f1f5f9"} }, CFG);
+}
+
+function drawReg(byReg) {
+  const ks = Object.keys(byReg).filter(k => byReg[k].prev > 0).sort((a, b) => yoy(byReg[a].cur, byReg[a].prev) - yoy(byReg[b].cur, byReg[b].prev));
+  document.getElementById("t-reg").textContent = "Изменение выручки по регионам, г/г" + (S.cat ? " · " + S.cat : "");
+  const vals = ks.map(k => yoy(byReg[k].cur, byReg[k].prev));
+  Plotly.react("c-reg", [{ y: ks, x: vals, type:"bar", orientation:"h",
+    marker:{color: ks.map((k, i) => S.region && k !== S.region ? C.pale : vals[i] < 0 ? C.down : C.up)},
+    text: vals.map(pct), textposition:"outside", cliponaxis:false,
+    customdata: ks.map(k => [byReg[k].cur, byReg[k].prev]),
+    hovertemplate:"<b>%{y}</b><br>Изменение: %{x:+.1f}%<br>Текущий период: %{customdata[0]:,.0f} ₽<br>Прошлый год: %{customdata[1]:,.0f} ₽<extra></extra>" }],
+    { ...BASE, margin:{l:110, r:40, t:6, b:30}, xaxis:{ticksuffix:"%", zeroline:true, range:[Math.min(0, ...vals) * 1.3 - 6, Math.max(0, ...vals) * 1.25 + 2], zerolinecolor:"#9ca3af", gridcolor:"#f1f5f9"},
+      annotations: ks.length ? [] : [{text:"Нет данных прошлого года для выбранного периода", showarrow:false, xref:"paper", yref:"paper", x:.5, y:.5}] }, CFG);
+}
+
+function drawDow(byDow) {
+  const ks = [1, 2, 3, 4, 5, 6, 7]; const total = ks.reduce((s, k) => s + (byDow[k]?.rev ?? 0), 0);
+  const share = ks.map(k => 100 * (byDow[k]?.rev ?? 0) / total); const mx = Math.max(...share);
+  Plotly.react("c-dow", [{ x: ks.map(k => DOWN[k - 1]), y: share, type:"bar", marker:{color: share.map(v => v === mx ? C.accent : C.main)},
+    text: share.map(v => v.toFixed(1).replace(".", ",") + "%"), textposition:"outside", cliponaxis:false,
+    customdata: ks.map(k => [byDow[k]?.rev ?? 0, byDow[k]?.ord ?? 0]),
+    hovertemplate:"<b>%{x}</b><br>Доля выручки: %{y:.1f}%<br>Выручка: %{customdata[0]:,.0f} ₽<br>Заказов: %{customdata[1]:,}<extra></extra>" }],
+    { ...BASE, margin:{l:40, r:10, t:20, b:30}, yaxis:{ticksuffix:"%", gridcolor:"#f1f5f9", rangemode:"tozero"} }, CFG);
+}
+
+function drawMap(byStore) {
+  const ids = Object.keys(byStore).map(Number).filter(s => byStore[s].rev > 0);
+  const mx = Math.max(...ids.map(s => byStore[s].rev));
+  const g = ids.map(s => yoy(byStore[s].cur, byStore[s].prev));
+  Plotly.react("c-map", [{ type:"scattergeo", lat: ids.map(s => store[s].lat), lon: ids.map(s => store[s].lon),
+    text: ids.map(s => store[s].city), mode:"markers+text", textposition:"top center", textfont:{size:11},
+    marker:{ size: ids.map(s => 10 + 40 * Math.sqrt(byStore[s].rev / mx)), opacity:.8, line:{color:"#fff", width:1},
+             color: g.map(v => v === null ? C.prev : v < 0 ? C.down : C.up) },
+    customdata: ids.map((s, i) => [store[s].region, byStore[s].rev, g[i] === null ? "н/д" : pct(g[i])]),
+    hovertemplate:"<b>%{text}</b> (%{customdata[0]})<br>Выручка: %{customdata[1]:,.0f} ₽<br>Изменение г/г: %{customdata[2]}<extra></extra>" }],
+    { ...BASE, margin:{l:0, r:0, t:0, b:0}, geo:{ projection:{type:"mercator"}, lonaxis:{range:[22, 98]}, lataxis:{range:[42, 64]},
+      showland:true, landcolor:"#f1f5f9", showcountries:true, countrycolor:"#cbd5e1", showocean:true, oceancolor:"#e0f2fe",
+      showlakes:false, coastlinecolor:"#cbd5e1", resolution:110 } }, CFG);
+}
+
+function drawTable(byProd, total) {
+  const ks = Object.keys(byProd).filter(p => byProd[p].rev > 0).sort((a, b) => byProd[b].rev - byProd[a].rev);
+  const mx = byProd[ks[0]]?.rev ?? 1;
+  const rows = ks.map(p => { const o = byProd[p]; const d = yoy(o.cur, o.prev);
+    return `<tr><td>${prod[p].name}</td><td>${prod[p].cat}</td><td><span class="bar" style="width:${Math.round(60 * o.rev / mx)}px"></span>${money(o.rev)}</td>` +
+      `<td>${num(o.ord)}</td><td>${num(o.units)}</td><td>${(100 * o.rev / total).toFixed(1).replace(".", ",")}%</td>` +
+      `<td class="${d === null ? "" : d >= 0 ? "up" : "down"}">${d === null ? "н/д" : pct(d)}</td></tr>`; });
+  document.getElementById("tbl").innerHTML = "<tr><th>Товар</th><th>Категория</th><th>Выручка</th><th>Заказы</th><th>Шт.</th><th>Доля</th><th>г/г*</th></tr>" + rows.join("");
+}
+
+function drawStory(t, byMonth, byCat, byReg, byDow) {
+  const ins = [], con = [];
+  const d = yoy(t.cur, t.prev);
+  if (d !== null) ins.push(`Выручка <b>${d >= 0 ? "выросла" : "снизилась"} на ${pct(Math.abs(d)).replace("+", "")}</b> к аналогичному периоду прошлого года (${money(t.cur)} против ${money(t.prev)}).`);
+  else ins.push(`За выбранный период выручка составила <b>${money(t.rev)}</b>; для сравнения с прошлым годом выберите период, включающий 2025 г.`);
+  const cats = Object.keys(byCat).sort((a, b) => byCat[b].rev - byCat[a].rev);
+  const catTotal = cats.reduce((s, k) => s + byCat[k].rev, 0);
+  if (cats.length) ins.push(`Больше всего выручки приносит категория <b>${cats[0]}</b> — ${(100 * byCat[cats[0]].rev / catTotal).toFixed(1).replace(".", ",")}% (вторая — ${cats[1]}).`);
+  // месяц с максимальным ростом и категория с наибольшим вкладом в прирост
+  const cmp = Object.keys(byMonth).map(Number).filter(i => comparable(i) && byMonth[i - 12]?.rev > 0);
+  if (cmp.length) {
+    const g = cmp.reduce((a, b) => yoy(byMonth[b].rev, byMonth[b - 12].rev) > yoy(byMonth[a].rev, byMonth[a - 12].rev) ? b : a);
+    const contrib = {};
+    for (const r of DATA.cube) {
+      if ((r[0] !== g && r[0] !== g - 12) || !ok(r[0], r[1], prod[r[2]].cat)) continue;
+      const c = prod[r[2]].cat; contrib[c] = (contrib[c] ?? 0) + (r[0] === g ? r[3] : -r[3]);
+    }
+    const top = Object.keys(contrib).sort((a, b) => contrib[b] - contrib[a])[0];
+    ins.push(`Максимальный рост — <b>${monLabel(g)}: ${pct(yoy(byMonth[g].rev, byMonth[g - 12].rev))}</b> г/г; основной вклад дала категория <b>${top}</b> (+${money(contrib[top])}).`);
+    if (top === "Электроника" && DATA.months[g].endsWith("-11")) con.push(`Акция «Чёрная пятница» в электронике (${monLabel(g)}) дала основной прирост месяца — механику стоит повторить и распространить на бытовую технику.`);
+  }
+  const falling = Object.keys(byReg).filter(k => byReg[k].prev > 0 && byReg[k].cur < byReg[k].prev);
+  if (Object.values(byReg).some(o => o.prev > 0)) {
+    if (falling.length) {
+      ins.push(`Падение продаж: <b>${falling.map(k => `${k} (${pct(yoy(byReg[k].cur, byReg[k].prev))})`).join(", ")}</b>.`);
+      con.push(`Регион(ы) ${falling.join(", ")} показывают снижение выручки г/г — нужен разбор причин (конкуренты, ассортимент, персонал) и локальные промо.`);
+    } else ins.push("Все регионы растут к прошлому году.");
+  }
+  const dk = [1, 2, 3, 4, 5, 6, 7].filter(k => byDow[k]); const totalD = dk.reduce((s, k) => s + byDow[k].rev, 0);
+  if (dk.length) {
+    const best = dk.reduce((a, b) => byDow[b].rev > byDow[a].rev ? b : a), worst = dk.reduce((a, b) => byDow[b].rev < byDow[a].rev ? b : a);
+    ins.push(`Пиковый день недели — <b>${DOWN[best - 1]}</b> (${(100 * byDow[best].rev / totalD).toFixed(1).replace(".", ",")}% выручки), самый слабый — ${DOWN[worst - 1]}.`);
+    con.push(`Выходные дают пик продаж — планировать смены персонала и промо на пт–вс; в ${DOWN[worst - 1]} можно проводить акции для выравнивания нагрузки.`);
+  }
+  if (cats.length) con.push(`Категории ${cats[0]} и ${cats[1]} формируют основную выручку — приоритет по запасам и выкладке в пиковые месяцы.`);
+  document.getElementById("insights").innerHTML = ins.map(s => `<li>${s}</li>`).join("");
+  document.getElementById("conclusions").innerHTML = con.map(s => `<li>${s}</li>`).join("");
+}
+
+// ---- фильтры и взаимодействие ----
+function fillSelect(id, items, all) {
+  const el = document.getElementById(id);
+  el.innerHTML = (all ? `<option value="">${all}</option>` : "") + items.map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+}
+fillSelect("f-from", DATA.months.map((m, i) => [i, monLabel(i)]));
+fillSelect("f-to", DATA.months.map((m, i) => [i, monLabel(i)]));
+fillSelect("f-region", regions.map(r => [r, r]), "Все регионы");
+fillSelect("f-cat", DATA.categories.map(c => [c, c]), "Все категории");
+function syncControls() {
+  document.getElementById("f-from").value = S.from; document.getElementById("f-to").value = S.to;
+  document.getElementById("f-region").value = S.region ?? ""; document.getElementById("f-cat").value = S.cat ?? "";
+}
+function set(patch) { Object.assign(S, patch); if (S.from > S.to) [S.from, S.to] = [S.to, S.from]; syncControls(); render(); }
+document.getElementById("f-from").onchange = e => set({from: +e.target.value});
+document.getElementById("f-to").onchange = e => set({to: +e.target.value});
+document.getElementById("f-region").onchange = e => set({region: e.target.value || null});
+document.getElementById("f-cat").onchange = e => set({cat: e.target.value || null});
+document.getElementById("reset").onclick = () => set({from:0, to:N - 1, region:null, cat:null, year:null, q:null});
+document.getElementById("crumbs").onclick = e => { const l = e.target.dataset.l; if (l === "0") set({year:null, q:null}); if (l === "1") set({q:null}); };
+
+syncControls(); render();
+document.getElementById("c-cat").on("plotly_click", e => { const c = e.points[0].y; set({cat: S.cat === c ? null : c}); });
+document.getElementById("c-reg").on("plotly_click", e => { const r = e.points[0].y; set({region: S.region === r ? null : r}); });
+document.getElementById("c-map").on("plotly_click", e => { const r = e.points[0].customdata[0]; set({region: S.region === r ? null : r}); });
+document.getElementById("c-drill").on("plotly_click", e => {
+  const x = e.points[0].x;
+  if (S.year === null) set({year: x}); else if (S.q === null) set({q: +x.slice(1)});
+});
+// API для автоматических скриншотов
+window.dashboard = { set, state: S };
+</script>
+</body>
+</html>

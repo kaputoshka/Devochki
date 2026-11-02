@@ -1,0 +1,32 @@
+C:\Users\ajsin\Desktop\ВУЗ\4 курс\Антонов\Лаба_6\consumer.py:14: DeprecationWarning: value_deserializer does not implement kafka.serializer.Deserializer
+  consumer = KafkaConsumer(
+Consumer started, window = 5 s
+Window saved: {'window_start': '2026-10-08T12:05:56.587763', 'window_end': '2026-10-08T12:06:01.657215', 'total_clicks': 9, 'total_views': 7, 'total_purchases': 1, 'total_revenue': 472.54}
+Window saved: {'window_start': '2026-10-08T12:06:01.657215', 'window_end': '2026-10-08T12:06:06.923941', 'total_clicks': 6, 'total_views': 11, 'total_purchases': 1, 'total_revenue': 365.47}
+Window saved: {'window_start': '2026-10-08T12:06:06.923941', 'window_end': '2026-10-08T12:06:11.993601', 'total_clicks': 10, 'total_views': 7, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:06:11.993601', 'window_end': '2026-10-08T12:06:17.240017', 'total_clicks': 8, 'total_views': 7, 'total_purchases': 1, 'total_revenue': 46.53}
+Window saved: {'window_start': '2026-10-08T12:06:17.240017', 'window_end': '2026-10-08T12:06:22.392719', 'total_clicks': 5, 'total_views': 11, 'total_purchases': 1, 'total_revenue': 125.48}
+Window saved: {'window_start': '2026-10-08T12:06:22.392719', 'window_end': '2026-10-08T12:06:27.452271', 'total_clicks': 8, 'total_views': 10, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:06:27.452271', 'window_end': '2026-10-08T12:06:32.775373', 'total_clicks': 0, 'total_views': 17, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:06:32.775373', 'window_end': '2026-10-08T12:06:37.820552', 'total_clicks': 5, 'total_views': 13, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:06:37.820552', 'window_end': '2026-10-08T12:06:43.006568', 'total_clicks': 6, 'total_views': 10, 'total_purchases': 1, 'total_revenue': 481.07}
+Window saved: {'window_start': '2026-10-08T12:06:43.006568', 'window_end': '2026-10-08T12:06:48.045520', 'total_clicks': 4, 'total_views': 13, 'total_purchases': 1, 'total_revenue': 247.33}
+Window saved: {'window_start': '2026-10-08T12:06:48.045520', 'window_end': '2026-10-08T12:06:53.102051', 'total_clicks': 4, 'total_views': 12, 'total_purchases': 1, 'total_revenue': 22.14}
+Window saved: {'window_start': '2026-10-08T12:06:53.102051', 'window_end': '2026-10-08T12:06:58.264873', 'total_clicks': 6, 'total_views': 12, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:06:58.264873', 'window_end': '2026-10-08T12:07:03.296867', 'total_clicks': 7, 'total_views': 7, 'total_purchases': 1, 'total_revenue': 354.41}
+Window saved: {'window_start': '2026-10-08T12:07:03.296867', 'window_end': '2026-10-08T12:07:08.537460', 'total_clicks': 4, 'total_views': 13, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:07:08.537460', 'window_end': '2026-10-08T12:07:13.925452', 'total_clicks': 5, 'total_views': 12, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:07:13.925452', 'window_end': '2026-10-08T12:07:19.299016', 'total_clicks': 6, 'total_views': 6, 'total_purchases': 2, 'total_revenue': 168.22}
+Window saved: {'window_start': '2026-10-08T12:07:19.299016', 'window_end': '2026-10-08T12:07:24.355085', 'total_clicks': 2, 'total_views': 13, 'total_purchases': 1, 'total_revenue': 300.86}
+Window saved: {'window_start': '2026-10-08T12:07:24.355085', 'window_end': '2026-10-08T12:07:29.498817', 'total_clicks': 6, 'total_views': 9, 'total_purchases': 1, 'total_revenue': 481.0}
+Window saved: {'window_start': '2026-10-08T12:07:29.498817', 'window_end': '2026-10-08T12:07:34.535532', 'total_clicks': 10, 'total_views': 5, 'total_purchases': 2, 'total_revenue': 850.87}
+Window saved: {'window_start': '2026-10-08T12:07:34.535532', 'window_end': '2026-10-08T12:07:39.560315', 'total_clicks': 4, 'total_views': 10, 'total_purchases': 2, 'total_revenue': 468.27}
+Window saved: {'window_start': '2026-10-08T12:07:39.560315', 'window_end': '2026-10-08T12:07:44.575551', 'total_clicks': 3, 'total_views': 13, 'total_purchases': 1, 'total_revenue': 152.11}
+Window saved: {'window_start': '2026-10-08T12:07:44.575551', 'window_end': '2026-10-08T12:07:49.880193', 'total_clicks': 7, 'total_views': 9, 'total_purchases': 1, 'total_revenue': 12.7}
+Window saved: {'window_start': '2026-10-08T12:07:49.880193', 'window_end': '2026-10-08T12:07:54.942435', 'total_clicks': 4, 'total_views': 12, 'total_purchases': 2, 'total_revenue': 577.88}
+Window saved: {'window_start': '2026-10-08T12:07:54.942435', 'window_end': '2026-10-08T12:07:59.978013', 'total_clicks': 2, 'total_views': 14, 'total_purchases': 1, 'total_revenue': 443.13}
+Window saved: {'window_start': '2026-10-08T12:07:59.978013', 'window_end': '2026-10-08T12:08:05.055280', 'total_clicks': 7, 'total_views': 10, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:08:05.055280', 'window_end': '2026-10-08T12:08:10.122453', 'total_clicks': 8, 'total_views': 7, 'total_purchases': 2, 'total_revenue': 598.93}
+Window saved: {'window_start': '2026-10-08T12:08:10.122453', 'window_end': '2026-10-08T12:08:15.155439', 'total_clicks': 4, 'total_views': 12, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:08:15.155439', 'window_end': '2026-10-08T12:08:20.342343', 'total_clicks': 4, 'total_views': 16, 'total_purchases': 0, 'total_revenue': 0}
+Window saved: {'window_start': '2026-10-08T12:08:20.342343', 'window_end': '2026-10-08T12:08:25.433687', 'total_clicks': 5, 'total_views': 14, 'total_purchases': 0, 'total_revenue': 0}

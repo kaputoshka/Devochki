@@ -1,0 +1,12 @@
+$ curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d @sample_request.json
+{"churn":1,"probability":0.6436,"model_version":"202610220715"}
+
+$ # лояльный клиент: двухлетний контракт, 70 мес., автоплатёж
+$ curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d '{"tenure": 70, "Contract": "Two year", ...}'
+{"churn":0,"probability":0.0208,"model_version":"202610220715"}
+
+$ # ошибка валидации: недопустимое значение Contract и отрицательный tenure
+$ curl -X POST http://localhost:5000/predict ... -d '{"tenure": -5, "Contract": "Lifetime", ...}'
+{'loc': ['body', 'tenure'], 'msg': 'Input should be greater than or equal to 0'}
+{'loc': ['body', 'Contract'], 'msg': "Input should be 'Month-to-month', 'One year' or 'Two year'"}
+HTTP 422
